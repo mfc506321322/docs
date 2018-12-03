@@ -1,11 +1,48 @@
+---
+title: 阿里巴巴
+sidebar: auto
+sidebarDepth: 2
+---
 # 阿里巴巴笔试+面试
 
 ##  阿里面试考查知识点
-安全方面就是你讲的那些xss,csrf，sql注入。还有react路由设计原理，webpack,双向绑定，redux数据流。加分项有es6的装饰器，generator，tcp原理，git flow, 其他的就是那本面试题上大部分都有。
+- 安全方面
+    - XSS: 跨站脚本攻击（通过input框或者地址栏注入js脚本）
+    - CSRF：跨站请求伪造（通过浏览器请求自动携带cookie）
+    - SQL注入： 
+- 路由相关
+    - 路由模式（hash，browser）
+    - 路由传参（url，state, path+query, name+params）
+    - 路由监听（beforeEach, afterEach, subscribe）
+    - 路由原理（hashChange + popState）
+- webpack
+    - entry
+    - output
+    - modules
+    - devServer
+    - plugins
+    - NODE_ENV = development
+- v-model
+    - v-bind：value + v-on:onChange
+- redux数据流
+    - store->组件： provider+connect
+    - 组件->action: dispatch
+    - action->store: 纯函数  
+- es6
+    - promise
+    - async/await
+    - 装饰器@
+    - class
+    - 解构+reset操作符
+- git flow
+    - 每人一个分支，开发完毕合并分支：直接合并或者PR
+    - 修复bug，从主分支临时开一个分支，修复完删除
+    - master主分支，develop开发测试分支
 
 ##  阿里笔试题经典案例
 ###  1. ES6
-#### 1.1关于Class
+#### 1.1 关于Class
+##### 1.1.1 阿里云产品线
 ::: tip Question:
 阿里云产品线十分丰富，拥有ECS、RDS等数百款产品，每个产品都具有一些通用属性，例如：ID（id），地域（region），名称（name），同时每个产品又包含自己特有的属性。 ECS拥有实例（instance）属性，可选值有ecs.t1.small、ecs.t3.small、ecs.t1.large RDS拥有数据库类型（dbType）属性，可选值有mysql、mssql、PPAS 请使用你的面向对象知识，基于ES6语法编写ECS、RDS两个类，并实现如下方法： 1. config() 返回一个字面量对象，可以拿到所有的成员变量。 2. buy() 返回一个URL，格式https://www.aliyun.com/buy?id=xxx&region=xxx&name=xxx&每个产品自己特有的成员变量
 :::
@@ -70,7 +107,43 @@ let rds = new ECS({name:'rds',id:2,region:'华东',dbType:'PPAS'})
 rds.config();
 rds.buy();
 ```
+
+##### 1.1.2 阿里云任务调度
+::: tip Question:
+使用js是实现以下效果 
+var priorityQueue = new PriorityQueue();  
+priorityQueue.enqueue('优先级1-1', 1);  
+priorityQueue.enqueue('优先级3-1', 3);  
+priorityQueue.enqueue('优先级1-2', 1);  
+priorityQueue.enqueue('优先级2-1', 2);  
+priorityQueue.print();  
+// 优先级1-1 优先级1-2 优先级2-1 优先级3-1
+priorityQueue.dequeue(); 
+:::
+
+```js
+class PriorityQueue{
+    constuctor(obj){
+        this.arr=[];
+    }
+    enqueue(str,num){
+        this.arr.push(str)
+    }
+    print(){
+        this.arr.sort()
+        console.log(this.arr)
+        return this.arr;
+    }
+}
+var priorityQueue=new PriorityQueue();
+priorityQueue.enqueue('优先级1-1',1)
+priorityQueue.enqueue('优先级3-1',3)
+priorityQueue.enqueue('优先级1-2',1)
+priorityQueue.enqueue('优先级2-1',2)
+priorityQueue.print();
+```
 #### 1.2 关于promise
+##### 1.2.1 图片加载
 :::tip Question:
 实现图片的依次加载和并行加载
 :::
@@ -104,7 +177,46 @@ function fAsync(){
 }
 ```
 
+##### 1.2.2 Promise原生实现
+::: tip Question:
+原生实现promise，实现依次调用，eg:a().then()
+:::
+```js
+function Promoise(executor){
+    let self = this;
+    self.status = 'pending';
+    self.value = undefined;
+    self.reason = undefined;
+    function resolve(value) {
+        if(self.status === 'pending') {
+            self.status = 'resolved';
+            self.value = value;
+        }
+    }
+    function reject(reason) {
+        if (self.status === 'pending'){
+            self.status = 'rejected';
+            self.reason = reason;
+        }
+    }
+    try {
+        excutor(resolve, reject);
+    }catch(e) {
+        reject(e);
+    }
+}
+Promise.prototype.then = function(onFulfilled, onRejected){
+    let self = this;
+    if (self.status === 'resolved'){
+        onFulfilled(self.value);
+    }
+    if (self.status === 'rejected'){
+        onRejected(self.reason);
+    }
+}
+```
 ### 2.DOM树在内存中的表示及JSX的遍历
+#### 2.1 DOM遍历
 ::: tip Question: 
 请用递归的方式遍历树形数据结构中的每一个节点
 :::
@@ -154,8 +266,49 @@ function eachOpt(option){
 }
 eachOpt(options)
 ```
+#### 2.2 DOM解析
+::: tip Question:
+将类似以下JSON表示的树状结构(可以无限层级)通过parseDOM函数(使用document.createElement,
+document.createTextNode,appendChild等方法)生成一颗DOM树(返回一个element元素)
+:::
+```js
+const JsonTree={
+    "tagName":"ul",
+    "props":{
+        "className":"list",
+        "data-name":"jsontree"
+    },
+    "tagName":"a",
+    "props":{
+        "href":"https://www.aliyun.com",
+        "target":"_blank"
+    },
+    "children":"阿里云"
+  } 
+};
 
-### 3. 字符串的基础操作
+function parseDOM(jsontree){
+    const {tagName,props,children}=jsontree;
+    const element = document.createElement("ul")
+    if(Array.isArray(children)){
+        children.forEach(item=>{
+            element.appendChild(parseDOM(item))
+        })
+    }else{
+        let child = document.createText(children); 
+        element.appendChild(child);
+    }
+    if(props){
+        Object.keys(props).forEach(item=>{
+            element[item]=props[item];
+        })
+    }
+    return element;
+}
+```
+
+### 3. JS原生
+#### 3.1 字符串操作
 :::tip Question:
 在开发中，我们经常会碰到将abc-xyz这类格式的字符串转为AbcXyz形式的驼峰字符串进行处理，
 例如：hello-world我们希望能够变成驼峰风格的HelloWorld，请编写代码实现这个camelize(str)方法 
@@ -171,8 +324,25 @@ function camelize(str) {
 }
 camelize('hello-world');
 ```
+#### 3.2 a链接监听
+::: tip Question:
+a链接点击监听实现
+监听网页上的所有a链接，当用户点击一个a链接随机加上时间戳
+:::
+```js
+document.body.addEventListener('click',function(e){
+  let target=e.target;
+  console.log(target.nodeName)
+  if(target.nodeName==='A'){
+    e.preventDefault();
+    let href=target.href+Math.random();
+    window.location.href=href;
+  }
+},false)
+```
 
-### 4.函数的节流与原生事件
+### 4.性能优化
+#### 4.1函数的节流与原生事件
 :::tip Question:
 请用js实现一个监听浏览器窗口变化的函数，当浏览器窗口的宽度大于等于 600px 
 的时候console.log('hello')（持续大于等于600px的话打印一次即可），请用你觉得最优的实现
@@ -189,7 +359,6 @@ var throttle = function(func, ms){
             }, ms);
             start = now;
         }
-
     }
 }
 
@@ -206,8 +375,8 @@ var resizeFunc = throttle(function(){
 window.addEventListener('resize', resizeFunc);
 ```
 
-### 4.关于排序
-#### 4.1 二分排序
+### 5.关于排序
+#### 5.1 二分排序
 :::tip Question
 写一个有效的算法完成矩阵搜索，这个矩阵有如下特点：
     1) 矩阵中的每行数字都是经过排序的，从左到右依次变大。
@@ -273,7 +442,7 @@ function search(arr, num){
 let result = search(arr, 52);
 console.log('查询结果...', result);
 ```
-#### 4.2 快速排序
+#### 5.2 快速排序
 ```js
 let arr1 = [1,23,7,5,3,2,8,2,19,99,10,12,17,78,87];
 function quickStart(arr){
