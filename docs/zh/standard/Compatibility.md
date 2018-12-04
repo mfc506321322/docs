@@ -56,15 +56,15 @@ sidebarDepth: 2
     页面js捕获click事件的回调函数处理，需要300ms后才生效，也就间接导致影响其他业务逻辑的处理。
     解决：fastclick库或者使用touchstart事件代替点击事件
     fastclick: 
-        var attachFastClick = require('fastclick');
-        attachFastClick(document.body);
+        var FastClick = require('fastclick');
+        FastClick.attach(document.body);
     touchstart事件：
         触摸事件的响应顺序为 touchstart --> touchmove --> touchend --> click,
         也可以通过绑定ontouchstart事件，加快对事件的响应，解决300ms延迟问题
 ### [点击穿透问题](http://www.fly63.com/article/detial/695)
     当A/B两个层上下z轴重叠，上层的A点击后消失或移开（这一点很重要），并且B元素本身有默认click事件（如a标签）或绑定了click事件。在这种情况下，点击A/B重叠的部分，就会出现点透的现象。
     本质原因: 事件触发顺序，参见上方
-    ![解决]：  fastclick库或者用touchend代替tap事件并阻止掉时A元素touchend的默认行为preventDefault()，从而阻止click事件的产生
+    解决：  fastclick库或者用touchend代替tap事件并阻止掉时A元素touchend的默认行为preventDefault()，从而阻止click事件的产生
 ### js不执行问题
     点击浏览器的回退，有时候不会自动执行js，特别是在mobilesafari中。这与往返缓存(bfcache)有关系。
     解决方法 ：window.onunload = function(){};
