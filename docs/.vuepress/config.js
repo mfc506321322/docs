@@ -44,8 +44,13 @@ module.exports = {
             ],
           },
           {
-            text: '阿里面试题总结',
-            link: '/zh/ali/'
+            text: '知名公司面试题',
+            items: [
+              { text: '阿里巴巴', link: '/zh/interview/ali.md'},
+              { text: '今日头条', link: '/zh/interview/headline.md'},
+              { text: '龙湖地产', link: '/zh/interview/longhu.md'},
+              { text: '快手', link: '/zh/interview/quick.md'}
+            ]
           },
           {
             text: '知识点笔记',
